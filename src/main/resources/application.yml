@@ -1,0 +1,15 @@
+# Server
+server:
+    port: 8080
+
+# Spring
+spring:
+    application:
+        name: processador-video
+    profiles:
+        active: dev
+    flyway:
+        enabled: true
+    jpa:
+        hibernate:
+            ddl-auto: none

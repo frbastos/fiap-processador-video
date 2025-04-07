@@ -1,0 +1,11 @@
+INSERT INTO produto (descricao, preco, categoria) VALUES ('X-Salada', 25.00, 'LANCHE');
+INSERT INTO produto (descricao, preco, categoria) VALUES ('X-Bacon', 30.00, 'LANCHE');
+INSERT INTO produto (descricao, preco, categoria) VALUES ('X-Egg', 27.00, 'LANCHE');
+INSERT INTO produto (descricao, preco, categoria) VALUES ('Bata Frita', 12.00, 'ACOMPANHAMENTO');
+INSERT INTO produto (descricao, preco, categoria) VALUES ('Polenta Frita', 12.00, 'ACOMPANHAMENTO');
+INSERT INTO produto (descricao, preco, categoria) VALUES ('Bata Frota com Cheeder e Bacon', 20.00, 'ACOMPANHAMENTO');
+INSERT INTO produto (descricao, preco, categoria) VALUES ('Coca-Cola', 7.00, 'BEBIDA');
+INSERT INTO produto (descricao, preco, categoria) VALUES ('Guaraná', 7.00, 'BEBIDA');
+INSERT INTO produto (descricao, preco, categoria) VALUES ('Pepsi', 7.00, 'BEBIDA');
+INSERT INTO produto (descricao, preco, categoria) VALUES ('Pudim', 7.00, 'SOBREMESA');
+INSERT INTO produto (descricao, preco, categoria) VALUES ('Sorvete', 5.00, 'SOBREMESA');
