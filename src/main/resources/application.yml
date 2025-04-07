@@ -8,8 +8,16 @@ spring:
         name: processador-video
     profiles:
         active: dev
-    flyway:
-        enabled: true
     jpa:
         hibernate:
             ddl-auto: none
+    servlet:
+        multipart:
+            enabled: true
+            max-file-size: 200MB
+            max-request-size: 200MB
+
+# Caminho temporário dos frames
+storage:
+    temp-directory: /tmp/frames
+
