@@ -1,1 +1,0 @@
-CREATE SEQUENCE sequencia_numero_pedido START WITH 1 INCREMENT BY 1;
