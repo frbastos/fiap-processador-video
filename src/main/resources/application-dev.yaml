@@ -1,0 +1,17 @@
+spring:
+    datasource:
+        username: sa
+        password:
+        driverClassName: org.h2.Driver
+    h2:
+        console:
+            enabled: true
+            path: /h2-console
+    jpa:
+        hibernate:
+            ddl-auto: create-drop
+            show-sql: true
+            database-platform: org.hibernate.dialect.H2Dialect
+        properties:
+            hibernate:
+                format_sql: true

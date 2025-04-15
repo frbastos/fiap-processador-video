@@ -1,0 +1,37 @@
+# Server
+server:
+    port: 8080
+
+# Spring
+spring:
+    application:
+        name: processador-video
+    profiles:
+        active: dev
+    jpa:
+        hibernate:
+            ddl-auto: none
+    servlet:
+        multipart:
+            enabled: true
+            max-file-size: 200MB
+            max-request-size: 200MB
+
+# Caminho temporário dos frames
+storage:
+    temp-directory: /tmp/frames
+    s3:
+        bucket: fiap-videos-processados
+
+cloud:
+    aws:
+        credentials:
+            access-key: ${AWS_ACCESS_KEY}
+            secret-key: ${AWS_SECRET_KEY}
+        region:
+            static: us-east-1
+
+queue:
+    video: videos-status
+    zip: zips-gerados
+
