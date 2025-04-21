@@ -40,7 +40,7 @@ public class ExtratorFrameService {
         ProcessBuilder processBuilder = new ProcessBuilder(
                 "ffmpeg",
                 "-i", videoPath.toString(),
-                "-vf", "fps=1/10",
+                "-vf", "fps=1",
                 outputPattern);
         processBuilder.redirectErrorStream(true);
         return processBuilder.start();
