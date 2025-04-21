@@ -10,7 +10,7 @@ public interface VideoGateway {
 
     void salvar(Video video);
 
-    List<Video> listarVideos();
+    List<Video> listarVideos(String usuarioId);
 
     Optional<Video> buscarPorId(UUID uuid);
 

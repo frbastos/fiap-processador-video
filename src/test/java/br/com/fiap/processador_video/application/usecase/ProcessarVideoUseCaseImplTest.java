@@ -52,9 +52,10 @@ class ProcessarVideoUseCaseImplTest {
         MultipartFile file = new MockMultipartFile("file", "video.mp4", "video/mp4", new byte[10]);
         Video video = new Video();
         UUID videoId = UUID.randomUUID();
+        String usuarioId = UUID.randomUUID().toString();
         video.setId(videoId);
 
-        when(registrarVideoUseCase.registrar(file)).thenReturn(video);
+        when(registrarVideoUseCase.registrar(file, usuarioId)).thenReturn(video);
         when(arquivoTemporarioService.salvarVideoTemporario(eq(file), anyString()))
                 .thenReturn(Paths.get("video-temp/video.mp4"));
         when(extratorFrameService.contarFramesEsperadosPorDuracao(any()))
@@ -63,7 +64,7 @@ class ProcessarVideoUseCaseImplTest {
                 .thenReturn(10);
 
         // Act
-        useCase.executar(file);
+        useCase.executar(file, usuarioId);
         Thread.sleep(500); // necessário por ser @Async
 
         // Assert
@@ -76,9 +77,10 @@ class ProcessarVideoUseCaseImplTest {
         MultipartFile file = new MockMultipartFile("file", "video.mp4", "video/mp4", new byte[10]);
         Video video = new Video();
         UUID videoId = UUID.randomUUID();
+        String usuarioId = UUID.randomUUID().toString();
         video.setId(videoId);
 
-        when(registrarVideoUseCase.registrar(file)).thenReturn(video);
+        when(registrarVideoUseCase.registrar(file, usuarioId)).thenReturn(video);
         when(arquivoTemporarioService.salvarVideoTemporario(eq(file), anyString()))
                 .thenReturn(Paths.get("video-temp/video.mp4"));
         when(extratorFrameService.contarFramesEsperadosPorDuracao(any()))
@@ -86,7 +88,7 @@ class ProcessarVideoUseCaseImplTest {
         when(extratorFrameService.extrairFrames(any(), any(), any()))
                 .thenReturn(5); // 50%
 
-        useCase.executar(file);
+        useCase.executar(file, usuarioId);
         Thread.sleep(500);
 
         verify(atualizarVideoUseCase).atualizar(videoId, VideoStatus.ERRO);
@@ -97,13 +99,14 @@ class ProcessarVideoUseCaseImplTest {
         MultipartFile file = new MockMultipartFile("file", "video.mp4", "video/mp4", new byte[10]);
         Video video = new Video();
         UUID videoId = UUID.randomUUID();
+        String usuarioId = UUID.randomUUID().toString();
         video.setId(videoId);
 
-        when(registrarVideoUseCase.registrar(file)).thenReturn(video);
+        when(registrarVideoUseCase.registrar(file, usuarioId)).thenReturn(video);
         when(arquivoTemporarioService.salvarVideoTemporario(eq(file), anyString()))
                 .thenThrow(new RuntimeException("Erro ao salvar"));
 
-        useCase.executar(file);
+        useCase.executar(file, usuarioId);
         Thread.sleep(500);
 
         verify(atualizarVideoUseCase).atualizar(videoId, VideoStatus.ERRO);
@@ -111,12 +114,15 @@ class ProcessarVideoUseCaseImplTest {
 
     @Test
     void naoDeveAtualizarStatusQuandoErroAcontecerAntesDeRegistrarVideo() {
+        String usuarioId = UUID.randomUUID().toString();
+
         MultipartFile file = new MockMultipartFile("file", "video.mp4", "video/mp4", new byte[10]);
 
-        when(registrarVideoUseCase.registrar(file))
+        when(registrarVideoUseCase.registrar(file, usuarioId
+        ))
                 .thenThrow(new RuntimeException("Erro ao registrar"));
 
-        useCase.executar(file);
+        useCase.executar(file, usuarioId);
         verifyNoInteractions(atualizarVideoUseCase);
     }
 }

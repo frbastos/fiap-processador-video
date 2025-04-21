@@ -4,6 +4,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ProcessarVideoUseCase {
 
-    void executar(MultipartFile file);
+    void executar(MultipartFile file, String usuarioId);
 
 }

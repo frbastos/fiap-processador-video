@@ -29,4 +29,6 @@ public class VideoEntity {
 
     private String zipPath;
 
+    private String usuarioId;
+
 }

@@ -27,8 +27,8 @@ public class VideoGatewayImpl implements VideoGateway {
     }
 
     @Override
-    public List<Video> listarVideos() {
-        return videoRepositoryJpa.findAll().stream().map(mapper::toDomain).toList();
+    public List<Video> listarVideos(String usuarioId) {
+        return videoRepositoryJpa.findByUsuarioId(usuarioId).stream().map(mapper::toDomain).toList();
     }
 
     @Override

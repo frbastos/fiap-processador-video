@@ -16,8 +16,8 @@ public class ListarVideosProcessadosUseCaseImpl implements ListarVideosProcessad
     private final VideoGateway videoGateway;
 
     @Override
-    public List<Video> listar() {
-        return videoGateway.listarVideos();
+    public List<Video> listar(String usuarioId) {
+        return videoGateway.listarVideos(usuarioId);
     }
 
 }

@@ -24,7 +24,9 @@ class VideoEntityMapperTest {
     @Test
     void deveConverterParaDomain() {
         UUID id = UUID.randomUUID();
-        VideoEntity entity = new VideoEntity(id, "video.mp4", VideoStatus.CONCLUIDO, "caminho.zip");
+        String usuarioId = UUID.randomUUID().toString();
+
+        VideoEntity entity = new VideoEntity(id, "video.mp4", VideoStatus.CONCLUIDO, "caminho.zip", usuarioId);
 
         Video domain = mapper.toDomain(entity);
 
@@ -38,7 +40,9 @@ class VideoEntityMapperTest {
     @Test
     void deveConverterParaEntity() {
         UUID id = UUID.randomUUID();
-        Video domain = new Video(id, "video.mp4", VideoStatus.PROCESSANDO, "video.zip");
+        String usuarioId = UUID.randomUUID().toString();
+
+        Video domain = new Video(id, "video.mp4", VideoStatus.PROCESSANDO, "video.zip", usuarioId);
 
         VideoEntity entity = mapper.toEntity(domain);
 

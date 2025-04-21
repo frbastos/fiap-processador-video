@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,18 +30,19 @@ class ListarVideosProcessadosUseCaseImplTest {
     @Test
     void deveListarVideosComSucesso() {
         // Arrange
+        String usuarioId = UUID.randomUUID().toString();
         Video video1 = new Video();
         Video video2 = new Video();
         List<Video> mockVideos = Arrays.asList(video1, video2);
 
-        when(videoGateway.listarVideos()).thenReturn(mockVideos);
+        when(videoGateway.listarVideos(usuarioId)).thenReturn(mockVideos);
 
         // Act
-        List<Video> resultado = useCase.listar();
+        List<Video> resultado = useCase.listar(usuarioId);
 
         // Assert
         assertNotNull(resultado);
         assertEquals(2, resultado.size());
-        verify(videoGateway).listarVideos();
+        verify(videoGateway).listarVideos(usuarioId);
     }
 }

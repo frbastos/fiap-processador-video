@@ -18,6 +18,7 @@ public class Video {
     private String nomeOriginal;
     private VideoStatus status;
     private String zipPath;
+    private String usuarioId;
 
     public void processando(){
         this.status = VideoStatus.PROCESSANDO;

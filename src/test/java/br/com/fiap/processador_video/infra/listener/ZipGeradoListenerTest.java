@@ -43,7 +43,9 @@ class ZipGeradoListenerTest {
         UUID videoId = UUID.randomUUID();
         String zipPath = "videos/123.zip";
 
-        Video video = new Video(videoId, "video.mp4", VideoStatus.PROCESSANDO, null);
+        String usuarioId = UUID.randomUUID().toString();
+
+        Video video = new Video(videoId, "video.mp4", VideoStatus.PROCESSANDO, null, usuarioId);
         when(buscarVideoPorIdUseCase.buscar(videoId)).thenReturn(video);
 
         ZipGeradoEvent event = new ZipGeradoEvent(videoId.toString(), zipPath);
@@ -61,8 +63,10 @@ class ZipGeradoListenerTest {
         UUID videoId = UUID.randomUUID();
         String zipPath = "videos/123.zip";
 
+        String usuarioId = UUID.randomUUID().toString();
+
         // vídeo já concluído e com zip
-        Video video = new Video(videoId, "video.mp4", VideoStatus.PROCESSANDO, zipPath);
+        Video video = new Video(videoId, "video.mp4", VideoStatus.PROCESSANDO, zipPath, usuarioId);
         when(buscarVideoPorIdUseCase.buscar(videoId)).thenReturn(video);
 
         ZipGeradoEvent event = new ZipGeradoEvent(videoId.toString(), zipPath);

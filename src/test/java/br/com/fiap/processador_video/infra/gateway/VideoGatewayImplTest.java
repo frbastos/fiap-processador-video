@@ -34,8 +34,11 @@ class VideoGatewayImplTest {
 
     @Test
     void deveSalvarVideoComSucesso() {
+        String usuarioId = UUID.randomUUID().toString();
+
+
         // Arrange
-        Video video = new Video(UUID.randomUUID(), "video.mp4", VideoStatus.PROCESSANDO, null);
+        Video video = new Video(UUID.randomUUID(), "video.mp4", VideoStatus.PROCESSANDO, null, usuarioId);
         VideoEntity entity = new VideoEntity();
         when(mapper.toEntity(video)).thenReturn(entity);
 
@@ -48,19 +51,21 @@ class VideoGatewayImplTest {
 
     @Test
     void deveListarTodosVideos() {
+        String usuarioId = UUID.randomUUID().toString();
+
         // Arrange
         VideoEntity entity1 = new VideoEntity();
         VideoEntity entity2 = new VideoEntity();
-        when(videoRepositoryJpa.findAll()).thenReturn(List.of(entity1, entity2));
+        when(videoRepositoryJpa.findByUsuarioId(usuarioId)).thenReturn(List.of(entity1, entity2));
 
-        Video video1 = new Video(UUID.randomUUID(), "video1", VideoStatus.CONCLUIDO, "zip1");
-        Video video2 = new Video(UUID.randomUUID(), "video2", VideoStatus.ERRO, "zip2");
+        Video video1 = new Video(UUID.randomUUID(), "video1", VideoStatus.CONCLUIDO, "zip1", usuarioId);
+        Video video2 = new Video(UUID.randomUUID(), "video2", VideoStatus.ERRO, "zip2", usuarioId);
 
         when(mapper.toDomain(entity1)).thenReturn(video1);
         when(mapper.toDomain(entity2)).thenReturn(video2);
 
         // Act
-        List<Video> videos = gateway.listarVideos();
+        List<Video> videos = gateway.listarVideos(usuarioId);
 
         // Assert
         assertEquals(2, videos.size());
@@ -70,10 +75,12 @@ class VideoGatewayImplTest {
 
     @Test
     void deveBuscarVideoPorIdComSucesso() {
+        String usuarioId = UUID.randomUUID().toString();
+
         // Arrange
         UUID videoId = UUID.randomUUID();
         VideoEntity entity = new VideoEntity();
-        Video video = new Video(videoId, "video.mp4", VideoStatus.CONCLUIDO, "path");
+        Video video = new Video(videoId, "video.mp4", VideoStatus.CONCLUIDO, "path", usuarioId);
 
         when(videoRepositoryJpa.findById(videoId)).thenReturn(Optional.of(entity));
         when(mapper.toDomain(entity)).thenReturn(video);

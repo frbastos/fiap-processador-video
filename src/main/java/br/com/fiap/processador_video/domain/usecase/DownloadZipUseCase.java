@@ -8,6 +8,6 @@ import br.com.fiap.processador_video.application.exception.VideoNotFoundExceptio
 
 public interface DownloadZipUseCase {
 
-    InputStreamResource baixarZip(UUID videoId) throws VideoNotFoundException;
+    InputStreamResource baixarZip(UUID videoId, String usuarioId) throws VideoNotFoundException;
 
 }

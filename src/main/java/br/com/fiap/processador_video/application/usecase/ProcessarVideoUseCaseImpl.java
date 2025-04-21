@@ -33,10 +33,10 @@ public class ProcessarVideoUseCaseImpl implements ProcessarVideoUseCase {
 
     @Async
     @Override
-    public void executar(MultipartFile file) {
+    public void executar(MultipartFile file, String usuarioId) {
         Video video = null;
         try {
-            video = registrarVideoUseCase.registrar(file);
+            video = registrarVideoUseCase.registrar(file, usuarioId);
 
             Path videoPath = arquivoTemporarioService.salvarVideoTemporario(file, video.getId().toString());
             Path outputDir = videoPath.getParent();

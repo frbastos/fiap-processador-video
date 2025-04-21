@@ -9,6 +9,8 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.AmqpException;
@@ -33,10 +35,11 @@ class RegistrarVideoUseCaseImplTest {
     @Test
     void deveRegistrarVideoComSucesso() {
         // Arrange
+        String usuarioId = UUID.randomUUID().toString();
         MultipartFile file = new MockMultipartFile("file", "meuvideo.mp4", "video/mp4", new byte[10]);
 
         // Act
-        Video video = registrarVideoUseCase.registrar(file);
+        Video video = registrarVideoUseCase.registrar(file, usuarioId);
 
         // Assert
         assertNotNull(video);
@@ -48,12 +51,13 @@ class RegistrarVideoUseCaseImplTest {
     @Test
     void deveLancarExcecaoQuandoAmqpFalhar() {
         // Arrange
+        String usuarioId = UUID.randomUUID().toString();
         MultipartFile file = new MockMultipartFile("file", "video.mp4", "video/mp4", new byte[10]);
 
         doThrow(new AmqpException("Falha na fila")).when(videoGateway).salvar(any());
 
         // Act & Assert
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> registrarVideoUseCase.registrar(file));
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> registrarVideoUseCase.registrar(file, usuarioId));
         assertTrue(ex.getMessage().contains("Erro ao publicar evento"));
     }
 }

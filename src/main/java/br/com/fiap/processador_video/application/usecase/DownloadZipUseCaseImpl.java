@@ -22,7 +22,7 @@ public class DownloadZipUseCaseImpl implements DownloadZipUseCase {
     private final ArmazenamentoGateway armazenamentoGateway;
 
     @Override
-    public InputStreamResource baixarZip(UUID videoId) throws VideoNotFoundException {
+    public InputStreamResource baixarZip(UUID videoId, String usuarioId) throws VideoNotFoundException {
         Video video = buscarVideoPorIdUseCase.buscar(videoId);
         S3Object objeto = armazenamentoGateway.buscarObjeto(video.getZipPath());
         return new InputStreamResource(objeto.getObjectContent());

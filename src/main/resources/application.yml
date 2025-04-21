@@ -1,6 +1,6 @@
 # Server
 server:
-    port: 8080
+    port: 8081
 
 # Spring
 spring:
@@ -16,6 +16,11 @@ spring:
             enabled: true
             max-file-size: 200MB
             max-request-size: 200MB
+    rabbitmq:
+        host: ${RABBITMQ_HOST}
+        port: ${RABBITMQ_PORT}
+        username: ${RABBIT_USERNAME}
+        password: ${RABBIT_PASSWORD}
 
 # Caminho temporário dos frames
 storage:
@@ -34,4 +39,3 @@ cloud:
 queue:
     video: videos-status
     zip: zips-gerados
-

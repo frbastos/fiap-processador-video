@@ -6,6 +6,6 @@ import br.com.fiap.processador_video.domain.entity.Video;
 
 public interface RegistrarVideoUseCase {
 
-    Video registrar(MultipartFile file);
+    Video registrar(MultipartFile file, String usuarioId);
 
 }

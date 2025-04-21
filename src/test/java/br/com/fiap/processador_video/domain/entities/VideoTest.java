@@ -15,7 +15,9 @@ class VideoTest {
     @Test
     void deveInstanciarComConstrutorCompleto() {
         UUID id = UUID.randomUUID();
-        Video video = new Video(id, "video.mp4", VideoStatus.PROCESSANDO, "path/zip");
+        String usuarioId = UUID.randomUUID().toString();
+        
+        Video video = new Video(id, "video.mp4", VideoStatus.PROCESSANDO, "path/zip", usuarioId);
 
         assertEquals(id, video.getId());
         assertEquals("video.mp4", video.getNomeOriginal());
@@ -62,9 +64,10 @@ class VideoTest {
     @Test
     void equalsEHashCodeDevemFuncionar() {
         UUID id = UUID.randomUUID();
+        String usuarioId = UUID.randomUUID().toString();
 
-        Video v1 = new Video(id, "video.mp4", VideoStatus.PROCESSANDO, "a.zip");
-        Video v2 = new Video(id, "video.mp4", VideoStatus.PROCESSANDO, "a.zip");
+        Video v1 = new Video(id, "video.mp4", VideoStatus.PROCESSANDO, "a.zip", usuarioId);
+        Video v2 = new Video(id, "video.mp4", VideoStatus.PROCESSANDO, "a.zip", usuarioId);
 
         assertEquals(v1, v2);
         assertEquals(v1.hashCode(), v2.hashCode());
@@ -72,8 +75,10 @@ class VideoTest {
 
     @Test
     void videosComIdsDiferentesDevemSerDiferentes() {
-        Video v1 = new Video(UUID.randomUUID(), "video1", VideoStatus.ERRO, "1.zip");
-        Video v2 = new Video(UUID.randomUUID(), "video2", VideoStatus.CONCLUIDO, "2.zip");
+        String usuarioId = UUID.randomUUID().toString();
+
+        Video v1 = new Video(UUID.randomUUID(), "video1", VideoStatus.ERRO, "1.zip", usuarioId);
+        Video v2 = new Video(UUID.randomUUID(), "video2", VideoStatus.CONCLUIDO, "2.zip", usuarioId);
 
         assertNotEquals(v1, v2);
     }

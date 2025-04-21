@@ -39,6 +39,7 @@ class DownloadZipUseCaseImplTest {
     void deveBaixarZipComSucesso() throws VideoNotFoundException, IllegalStateException, IOException {
         // Arrange
         UUID videoId = UUID.randomUUID();
+        String usuarioId = UUID.randomUUID().toString();
         Video video = new Video();
         video.setZipPath("video123/zip/video.zip");
 
@@ -52,7 +53,7 @@ class DownloadZipUseCaseImplTest {
         when(s3Object.getObjectContent()).thenReturn(inputStream);
 
         // Act
-        InputStreamResource resource = useCase.baixarZip(videoId);
+        InputStreamResource resource = useCase.baixarZip(videoId, usuarioId);
 
         // Assert
         assertNotNull(resource);
@@ -63,9 +64,10 @@ class DownloadZipUseCaseImplTest {
     void deveLancarExcecaoQuandoVideoNaoForEncontrado() throws VideoNotFoundException {
         // Arrange
         UUID videoId = UUID.randomUUID();
+        String usuarioId = UUID.randomUUID().toString();
         when(buscarVideoPorIdUseCase.buscar(videoId)).thenThrow(new VideoNotFoundException(videoId));
 
         // Act & Assert
-        assertThrows(VideoNotFoundException.class, () -> useCase.baixarZip(videoId));
+        assertThrows(VideoNotFoundException.class, () -> useCase.baixarZip(videoId, usuarioId));
     }
 }

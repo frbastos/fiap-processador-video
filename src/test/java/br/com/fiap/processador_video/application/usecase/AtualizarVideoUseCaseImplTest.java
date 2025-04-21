@@ -40,6 +40,7 @@ class AtualizarVideoUseCaseImplTest {
     void deveAtualizarStatusParaConcluidoComSucesso() throws Exception {
         // Arrange
         UUID videoId = UUID.randomUUID();
+
         Video video = mock(Video.class);
         when(buscarVideoPorIdUseCase.buscar(videoId)).thenReturn(video);
 

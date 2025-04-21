@@ -29,6 +29,7 @@ import br.com.fiap.processador_video.domain.entity.Video;
 import br.com.fiap.processador_video.domain.usecase.DownloadZipUseCase;
 import br.com.fiap.processador_video.domain.usecase.ListarVideosProcessadosUseCase;
 import br.com.fiap.processador_video.domain.usecase.ProcessarVideoUseCase;
+import br.com.fiap.processador_video.domain.valueobjects.UsuarioContext;
 import br.com.fiap.processador_video.domain.valueobjects.VideoStatus;
 
 class VideoControllerTest {
@@ -61,20 +62,26 @@ class VideoControllerTest {
 
     @Test
     void deveAceitarUploadDeVideos() throws Exception {
+        String usuarioId = UUID.randomUUID().toString();
+        UsuarioContext.setUsuarioId(usuarioId);
+        
         MockMultipartFile file = new MockMultipartFile("files", "video.mp4", "video/mp4", "conteudo".getBytes());
 
         mockMvc.perform(multipart("/videos/upload").file(file))
                 .andExpect(status().isAccepted());
 
-        verify(processarVideoUseCase).executar(any());
+        verify(processarVideoUseCase).executar(any(), any());
     }
 
     @Test
     void deveListarVideosProcessados() throws Exception {
-        Video video1 = new Video(UUID.randomUUID(), "video1.mp4", VideoStatus.CONCLUIDO, "path1");
-        Video video2 = new Video(UUID.randomUUID(), "video2.mp4", VideoStatus.ERRO, "path2");
+        String usuarioId = UUID.randomUUID().toString();
+        UsuarioContext.setUsuarioId(usuarioId);
 
-        when(listarVideosProcessadosUseCase.listar()).thenReturn(List.of(video1, video2));
+        Video video1 = new Video(UUID.randomUUID(), "video1.mp4", VideoStatus.CONCLUIDO, "path1", usuarioId);
+        Video video2 = new Video(UUID.randomUUID(), "video2.mp4", VideoStatus.ERRO, "path2", usuarioId);
+
+        when(listarVideosProcessadosUseCase.listar(any())).thenReturn(List.of(video1, video2));
 
         mockMvc.perform(get("/videos"))
                 .andExpect(status().isOk())
@@ -84,9 +91,13 @@ class VideoControllerTest {
     @Test
     void deveFazerDownloadDoZip() throws Exception {
         UUID videoId = UUID.randomUUID();
+
+        String usuarioId = UUID.randomUUID().toString();
+        UsuarioContext.setUsuarioId(usuarioId);
+
         InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream("zip content".getBytes()));
 
-        when(downloadZipUseCase.baixarZip(videoId)).thenReturn(resource);
+        when(downloadZipUseCase.baixarZip(videoId, usuarioId)).thenReturn(resource);
 
         mockMvc.perform(get("/videos/{id}/download", videoId))
                 .andExpect(status().isOk())
@@ -96,7 +107,11 @@ class VideoControllerTest {
     @Test
     void deveRetornar404QuandoVideoNaoExistirNoDownload() throws Exception {
         UUID videoId = UUID.randomUUID();
-        when(downloadZipUseCase.baixarZip(videoId)).thenThrow(new VideoNotFoundException(videoId));
+
+        String usuarioId = UUID.randomUUID().toString();
+        UsuarioContext.setUsuarioId(usuarioId);
+
+        when(downloadZipUseCase.baixarZip(videoId, usuarioId)).thenThrow(new VideoNotFoundException(videoId));
 
         mockMvc.perform(get("/videos/{id}/download", videoId))
                 .andExpect(status().isNotFound());

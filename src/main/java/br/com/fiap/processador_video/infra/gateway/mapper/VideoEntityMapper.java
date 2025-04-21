@@ -9,11 +9,11 @@ import br.com.fiap.processador_video.infra.entity.VideoEntity;
 public class VideoEntityMapper {
 
     public Video toDomain(VideoEntity entity){
-        return new Video(entity.getId(), entity.getNomeOriginal(), entity.getStatus(), entity.getZipPath());
+        return new Video(entity.getId(), entity.getNomeOriginal(), entity.getStatus(), entity.getZipPath(), entity.getUsuarioId());
     }
 
     public VideoEntity toEntity(Video video){
-        return new VideoEntity(video.getId(), video.getNomeOriginal(), video.getStatus(), video.getZipPath());
+        return new VideoEntity(video.getId(), video.getNomeOriginal(), video.getStatus(), video.getZipPath(), video.getUsuarioId());
     }
 
 }

@@ -1,5 +1,6 @@
 package br.com.fiap.processador_video.infra.repository;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,5 +20,7 @@ public interface VideoRepositoryJpa extends JpaRepository<VideoEntity, UUID>{
     @Transactional
     @Query("UPDATE VideoEntity v SET v.status = :status WHERE v.id = :videoId")
     void atualizarStatus(@Param("videoId") UUID videoId, @Param("status") VideoStatus status);
+
+    List<VideoEntity> findByUsuarioId(String usuarioId);
 
 }

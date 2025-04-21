@@ -21,14 +21,14 @@ public class RegistrarVideoUseCaseImpl implements RegistrarVideoUseCase {
 
     @Transactional
     @Override
-    public Video registrar(MultipartFile file) {
+    public Video registrar(MultipartFile file, String usuarioId) {
 
         Video video = null;
         try {
             UUID videoId = UUID.randomUUID();
             String nomeOriginal = file.getOriginalFilename();
     
-            video = new Video(videoId, nomeOriginal, VideoStatus.PROCESSANDO, null);
+            video = new Video(videoId, nomeOriginal, VideoStatus.PROCESSANDO, null, usuarioId);
             videoRepository.salvar(video);
         } catch (AmqpException e) {
             throw new RuntimeException("Erro ao publicar evento do vídeo", e);

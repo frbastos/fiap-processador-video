@@ -6,6 +6,6 @@ import br.com.fiap.processador_video.domain.entity.Video;
 
 public interface ListarVideosProcessadosUseCase{
 
-    List<Video> listar();
+    List<Video> listar(String usuarioId);
 
 }
