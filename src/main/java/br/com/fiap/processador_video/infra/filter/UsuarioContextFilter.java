@@ -30,7 +30,7 @@ public class UsuarioContextFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
         // Ignora endpoints do actuator
-        if (path.startsWith("/actuator")) {
+        if (path != null && path.startsWith("/actuator")) {
             filterChain.doFilter(request, response);
             return;
         }
