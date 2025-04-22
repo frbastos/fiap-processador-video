@@ -22,13 +22,18 @@ public class UsuarioContextFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
-
         try {
+            if (!"HTTP/1.1".equals(request.getProtocol()) && !"HTTP/2.0".equals(request.getProtocol())) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             String usuarioId = request.getHeader(USER_HEADER);
 
             if (usuarioId == null || usuarioId.isBlank()) {
                 throw new UsuarioNaoEncontradoNoHeaderException("Cabeçalho obrigatório 'X-User-Sub' não encontrado.");
             }
+
             UsuarioContext.setUsuarioId(usuarioId);
             filterChain.doFilter(request, response);
         } finally {
