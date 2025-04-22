@@ -25,6 +25,7 @@ public class ExtratorFrameService {
 
     @Transactional
     public int extrairFrames(String videoId, Path videoPath, Path outputDir) throws IOException, InterruptedException {
+        log.info("Extraindo frames");
         Process ffmpegProcess = iniciarFFmpeg(videoPath, outputDir);
         lerLogsFFmpegAsync(ffmpegProcess, videoId);
 
@@ -83,6 +84,8 @@ public class ExtratorFrameService {
     }
 
     protected void publicarFrame(String videoId, Path path, Set<String> publicados, AtomicInteger contador) {
+        log.info("Publicando frames");
+        
         String frameName = path.getFileName().toString();
         String s3Key = videoId + "/frames/" + frameName;
 

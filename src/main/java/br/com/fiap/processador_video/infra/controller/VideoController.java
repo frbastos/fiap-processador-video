@@ -24,8 +24,9 @@ import br.com.fiap.processador_video.domain.usecase.ListarVideosProcessadosUseCa
 import br.com.fiap.processador_video.domain.usecase.ProcessarVideoUseCase;
 import br.com.fiap.processador_video.domain.valueobjects.UsuarioContext;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-
+@Slf4j
 @RestController
 @RequestMapping("/videos")
 @RequiredArgsConstructor
@@ -38,6 +39,7 @@ public class VideoController {
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> uploadVideos(@RequestParam MultipartFile[] files) {
         String usuarioId = UsuarioContext.getUsuarioId();
+        log.info("Endpoint /videos/upload");
         Arrays.stream(files).parallel()
                 .forEach(file -> processarVideoUseCase.executar(file, usuarioId));
         return ResponseEntity.accepted().build();
@@ -45,12 +47,14 @@ public class VideoController {
 
     @GetMapping("")
     public List<Video> listarVideosProcessados() {
+        log.info("Endpoint /videos");
         String usuarioId = UsuarioContext.getUsuarioId();
         return listarVideosProcessadosUseCase.listar(usuarioId);
     }
 
     @GetMapping("/{videoId}/download")
     public ResponseEntity<?> downloadZip(@PathVariable UUID videoId) {
+        log.info("Endpoint /videos/download");
         String usuarioId = UsuarioContext.getUsuarioId();
         try {
             InputStreamResource resource = downloadZipUseCase.baixarZip(videoId, usuarioId);

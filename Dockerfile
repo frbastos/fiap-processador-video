@@ -16,6 +16,12 @@ RUN ./mvnw clean package -DskipTests
 # Estágio 2: Construir a imagem final
 FROM eclipse-temurin:17-jdk-jammy
 
+# Instala o ffmpeg e ffprobe
+RUN apt-get update && \
+    apt-get install -y ffmpeg && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # Definir o diretório de trabalho dentro do contêiner
 WORKDIR /app
 

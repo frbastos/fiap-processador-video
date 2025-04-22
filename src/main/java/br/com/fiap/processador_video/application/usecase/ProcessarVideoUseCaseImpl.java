@@ -18,9 +18,9 @@ import br.com.fiap.processador_video.domain.valueobjects.VideoStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ProcessarVideoUseCaseImpl implements ProcessarVideoUseCase {
 
     private final ExtratorFrameService extratorFrameService;
@@ -34,6 +34,7 @@ public class ProcessarVideoUseCaseImpl implements ProcessarVideoUseCase {
     @Async
     @Override
     public void executar(MultipartFile file, String usuarioId) {
+        log.info("Processando vídeo");
         Video video = null;
         try {
             video = registrarVideoUseCase.registrar(file, usuarioId);

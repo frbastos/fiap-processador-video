@@ -12,7 +12,9 @@ import br.com.fiap.processador_video.domain.usecase.RegistrarVideoUseCase;
 import br.com.fiap.processador_video.domain.valueobjects.VideoStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RegistrarVideoUseCaseImpl implements RegistrarVideoUseCase {
@@ -22,6 +24,8 @@ public class RegistrarVideoUseCaseImpl implements RegistrarVideoUseCase {
     @Transactional
     @Override
     public Video registrar(MultipartFile file, String usuarioId) {
+
+        log.info("Registrando vídeo ...");
 
         Video video = null;
         try {
