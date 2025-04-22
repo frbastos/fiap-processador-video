@@ -17,6 +17,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.com.fiap.processador_video.application.service.ArquivoTemporarioService;
+import br.com.fiap.processador_video.application.service.EmailService;
 import br.com.fiap.processador_video.application.service.ExtratorFrameService;
 import br.com.fiap.processador_video.domain.entity.Video;
 import br.com.fiap.processador_video.domain.usecase.AtualizarVideoUseCase;
@@ -30,6 +31,7 @@ class ProcessarVideoUseCaseImplTest {
     private RegistrarVideoUseCase registrarVideoUseCase;
     private AtualizarVideoUseCase atualizarVideoUseCase;
     private ProcessarVideoUseCaseImpl useCase;
+    private EmailService emailService;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -37,8 +39,9 @@ class ProcessarVideoUseCaseImplTest {
         arquivoTemporarioService = mock(ArquivoTemporarioService.class);
         registrarVideoUseCase = mock(RegistrarVideoUseCase.class);
         atualizarVideoUseCase = mock(AtualizarVideoUseCase.class);
+        emailService = mock(EmailService.class);
 
-        useCase = new ProcessarVideoUseCaseImpl(extratorFrameService, arquivoTemporarioService, registrarVideoUseCase, atualizarVideoUseCase);
+        useCase = new ProcessarVideoUseCaseImpl(extratorFrameService, arquivoTemporarioService, registrarVideoUseCase, atualizarVideoUseCase, emailService);
 
         // Injeta o valor do tempDirectory (se necessário)
         var field = ProcessarVideoUseCaseImpl.class.getDeclaredField("tempDirectory");

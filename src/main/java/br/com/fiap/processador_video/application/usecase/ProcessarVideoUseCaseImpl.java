@@ -9,11 +9,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.com.fiap.processador_video.application.exception.VideoNotFoundException;
 import br.com.fiap.processador_video.application.service.ArquivoTemporarioService;
+import br.com.fiap.processador_video.application.service.EmailService;
 import br.com.fiap.processador_video.application.service.ExtratorFrameService;
 import br.com.fiap.processador_video.domain.entity.Video;
 import br.com.fiap.processador_video.domain.usecase.AtualizarVideoUseCase;
 import br.com.fiap.processador_video.domain.usecase.ProcessarVideoUseCase;
 import br.com.fiap.processador_video.domain.usecase.RegistrarVideoUseCase;
+import br.com.fiap.processador_video.domain.valueobjects.UsuarioContext;
 import br.com.fiap.processador_video.domain.valueobjects.VideoStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,7 @@ public class ProcessarVideoUseCaseImpl implements ProcessarVideoUseCase {
     private final ArquivoTemporarioService arquivoTemporarioService;
     private final RegistrarVideoUseCase registrarVideoUseCase;
     private final AtualizarVideoUseCase atualizarVideoUseCase;
+    private final EmailService emailService;
 
     @Value("${storage.temp-directory}")
     private String tempDirectory;
@@ -63,6 +66,10 @@ public class ProcessarVideoUseCaseImpl implements ProcessarVideoUseCase {
                 log.error("Erro ao processar vídeo " + video.getId(), e.getMessage());
                 try {
                     atualizarVideoUseCase.atualizar(video.getId(), VideoStatus.ERRO);
+
+                    // Enviar email
+                    String email = UsuarioContext.getEmail();
+                    emailService.enviarErroProcessamento(email, video.getId().toString(), e.getMessage());
                 } catch (VideoNotFoundException e1) {
                     e1.printStackTrace();
                 }
