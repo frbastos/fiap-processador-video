@@ -25,58 +25,75 @@ class UsuarioContextFilterTest {
     private final UsuarioContextFilter filter = new UsuarioContextFilter();
 
     @AfterEach
-    void clearContext() {
+    void limparContexto() {
         UsuarioContext.clear();
     }
 
     @Test
-    void deveSetarUsuarioIdQuandoHeaderPresente() throws ServletException, IOException {
+    void deveSetarUsuarioIdQuandoProtocoloHttp1EHeaderPresente() throws ServletException, IOException {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
         FilterChain chain = mock(FilterChain.class);
 
-        String usuarioId = "abc-123";
-        when(request.getHeader("X-User-Sub")).thenReturn(usuarioId);
+        when(request.getProtocol()).thenReturn("HTTP/1.1");
+        when(request.getHeader("X-User-Sub")).thenReturn("user-123");
 
-        // Captura o valor de UsuarioContext dentro do fluxo do filtro
         doAnswer(invocation -> {
-            assertEquals(usuarioId, UsuarioContext.getUsuarioId()); // dentro da execução
+            assertEquals("user-123", UsuarioContext.getUsuarioId());
             return null;
         }).when(chain).doFilter(request, response);
 
         filter.doFilterInternal(request, response, chain);
-
-        verify(chain).doFilter(request, response); // garante que foi chamado
+        verify(chain).doFilter(request, response);
     }
 
     @Test
-    void deveLancarExcecaoQuandoHeaderNaoPresente() {
+    void deveSetarUsuarioIdQuandoProtocoloHttp2EHeaderPresente() throws ServletException, IOException {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
         FilterChain chain = mock(FilterChain.class);
 
+        when(request.getProtocol()).thenReturn("HTTP/2.0");
+        when(request.getHeader("X-User-Sub")).thenReturn("user-456");
+
+        doAnswer(invocation -> {
+            assertEquals("user-456", UsuarioContext.getUsuarioId());
+            return null;
+        }).when(chain).doFilter(request, response);
+
+        filter.doFilterInternal(request, response, chain);
+        verify(chain).doFilter(request, response);
+    }
+
+    @Test
+    void deveIgnorarFiltroQuandoProtocoloNaoEhHttp11OuHttp2() throws ServletException, IOException {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
+
+        when(request.getProtocol()).thenReturn("HTTPS/1.1");
+
+        filter.doFilterInternal(request, response, chain);
+
+        verify(chain).doFilter(request, response);
+        assertNull(UsuarioContext.getUsuarioId()); // não foi setado
+    }
+
+    @Test
+    void deveLancarExcecaoQuandoProtocoloEhHttp11EMasHeaderNaoPresente() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
+
+        when(request.getProtocol()).thenReturn("HTTP/1.1");
         when(request.getHeader("X-User-Sub")).thenReturn(null);
 
         UsuarioNaoEncontradoNoHeaderException ex = assertThrows(
                 UsuarioNaoEncontradoNoHeaderException.class,
-                () -> filter.doFilterInternal(request, response, chain));
+                () -> filter.doFilterInternal(request, response, chain)
+        );
 
         assertEquals("Cabeçalho obrigatório 'X-User-Sub' não encontrado.", ex.getMessage());
-    }
-
-    @Test
-    void deveLimparUsuarioContextMesmoComErro() throws ServletException, IOException {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        FilterChain chain = mock(FilterChain.class);
-
-        when(request.getHeader("X-User-Sub")).thenReturn(null);
-
-        try {
-            filter.doFilterInternal(request, response, chain);
-        } catch (UsuarioNaoEncontradoNoHeaderException ignored) {
-        }
-
         assertNull(UsuarioContext.getUsuarioId());
     }
 }
