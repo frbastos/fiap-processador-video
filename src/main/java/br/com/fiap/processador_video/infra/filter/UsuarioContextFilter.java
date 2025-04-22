@@ -5,6 +5,9 @@ import java.io.IOException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
+
 import br.com.fiap.processador_video.domain.valueobjects.UsuarioContext;
 import br.com.fiap.processador_video.infra.exception.UsuarioNaoEncontradoNoHeaderException;
 import jakarta.servlet.FilterChain;
@@ -15,10 +18,11 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class UsuarioContextFilter extends OncePerRequestFilter {
 
-    private static final String USER_HEADER = "X-User-Sub";
+    private static final String AUTH_HEADER = "Authorization";
+    private static final String BEARER_PREFIX = "Bearer ";
 
     @Override
-    protected void doFilterInternal(
+    public void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
@@ -28,10 +32,17 @@ public class UsuarioContextFilter extends OncePerRequestFilter {
                 return;
             }
 
-            String usuarioId = request.getHeader(USER_HEADER);
+            String authorization = request.getHeader(AUTH_HEADER);
+            if (authorization == null || !authorization.startsWith(BEARER_PREFIX)) {
+                throw new UsuarioNaoEncontradoNoHeaderException("Header Authorization não encontrado ou inválido.");
+            }
+
+            String token = authorization.substring(BEARER_PREFIX.length());
+            DecodedJWT jwt = JWT.decode(token);
+            String usuarioId = jwt.getSubject();
 
             if (usuarioId == null || usuarioId.isBlank()) {
-                throw new UsuarioNaoEncontradoNoHeaderException("Cabeçalho obrigatório 'X-User-Sub' não encontrado.");
+                throw new UsuarioNaoEncontradoNoHeaderException("Claim 'sub' não encontrada no token.");
             }
 
             UsuarioContext.setUsuarioId(usuarioId);

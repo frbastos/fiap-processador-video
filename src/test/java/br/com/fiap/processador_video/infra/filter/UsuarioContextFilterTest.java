@@ -13,6 +13,9 @@ import java.io.IOException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+
 import br.com.fiap.processador_video.domain.valueobjects.UsuarioContext;
 import br.com.fiap.processador_video.infra.exception.UsuarioNaoEncontradoNoHeaderException;
 import jakarta.servlet.FilterChain;
@@ -25,21 +28,30 @@ class UsuarioContextFilterTest {
     private final UsuarioContextFilter filter = new UsuarioContextFilter();
 
     @AfterEach
-    void limparContexto() {
+    void limpar() {
         UsuarioContext.clear();
     }
 
+    private String gerarTokenComSub(String sub) {
+        return JWT.create()
+                .withSubject(sub)
+                .sign(Algorithm.HMAC256("segredo-teste"));
+    }
+
     @Test
-    void deveSetarUsuarioIdQuandoProtocoloHttp1EHeaderPresente() throws ServletException, IOException {
+    void deveSetarUsuarioIdQuandoTokenValido() throws ServletException, IOException {
+        String usuarioId = "usuario-123";
+        String token = gerarTokenComSub(usuarioId);
+
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
         FilterChain chain = mock(FilterChain.class);
 
         when(request.getProtocol()).thenReturn("HTTP/1.1");
-        when(request.getHeader("X-User-Sub")).thenReturn("user-123");
+        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
 
         doAnswer(invocation -> {
-            assertEquals("user-123", UsuarioContext.getUsuarioId());
+            assertEquals(usuarioId, UsuarioContext.getUsuarioId());
             return null;
         }).when(chain).doFilter(request, response);
 
@@ -48,52 +60,52 @@ class UsuarioContextFilterTest {
     }
 
     @Test
-    void deveSetarUsuarioIdQuandoProtocoloHttp2EHeaderPresente() throws ServletException, IOException {
+    void deveIgnorarSeProtocoloNaoForHttp1OuHttp2() throws ServletException, IOException {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
         FilterChain chain = mock(FilterChain.class);
 
-        when(request.getProtocol()).thenReturn("HTTP/2.0");
-        when(request.getHeader("X-User-Sub")).thenReturn("user-456");
-
-        doAnswer(invocation -> {
-            assertEquals("user-456", UsuarioContext.getUsuarioId());
-            return null;
-        }).when(chain).doFilter(request, response);
-
-        filter.doFilterInternal(request, response, chain);
-        verify(chain).doFilter(request, response);
-    }
-
-    @Test
-    void deveIgnorarFiltroQuandoProtocoloNaoEhHttp11OuHttp2() throws ServletException, IOException {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        FilterChain chain = mock(FilterChain.class);
-
-        when(request.getProtocol()).thenReturn("HTTPS/1.1");
+        when(request.getProtocol()).thenReturn("FTP/1.0");
 
         filter.doFilterInternal(request, response, chain);
 
         verify(chain).doFilter(request, response);
-        assertNull(UsuarioContext.getUsuarioId()); // não foi setado
+        assertNull(UsuarioContext.getUsuarioId());
     }
 
     @Test
-    void deveLancarExcecaoQuandoProtocoloEhHttp11EMasHeaderNaoPresente() {
+    void deveLancarExcecaoSeAuthorizationForNulo() {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
         FilterChain chain = mock(FilterChain.class);
 
         when(request.getProtocol()).thenReturn("HTTP/1.1");
-        when(request.getHeader("X-User-Sub")).thenReturn(null);
+        when(request.getHeader("Authorization")).thenReturn(null);
 
         UsuarioNaoEncontradoNoHeaderException ex = assertThrows(
                 UsuarioNaoEncontradoNoHeaderException.class,
                 () -> filter.doFilterInternal(request, response, chain)
         );
 
-        assertEquals("Cabeçalho obrigatório 'X-User-Sub' não encontrado.", ex.getMessage());
-        assertNull(UsuarioContext.getUsuarioId());
+        assertEquals("Header Authorization não encontrado ou inválido.", ex.getMessage());
+    }
+
+    @Test
+    void deveLancarExcecaoSeTokenSemSub() {
+        String tokenSemSub = JWT.create().sign(Algorithm.HMAC256("segredo-teste"));
+
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
+
+        when(request.getProtocol()).thenReturn("HTTP/2.0");
+        when(request.getHeader("Authorization")).thenReturn("Bearer " + tokenSemSub);
+
+        UsuarioNaoEncontradoNoHeaderException ex = assertThrows(
+                UsuarioNaoEncontradoNoHeaderException.class,
+                () -> filter.doFilterInternal(request, response, chain)
+        );
+
+        assertEquals("Claim 'sub' não encontrada no token.", ex.getMessage());
     }
 }
