@@ -26,6 +26,14 @@ public class UsuarioContextFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
+
+        String path = request.getRequestURI();
+
+        // Ignora endpoints do actuator
+        if (path.startsWith("/actuator")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         try {
             if (!"HTTP/1.1".equals(request.getProtocol()) && !"HTTP/2.0".equals(request.getProtocol())) {
                 filterChain.doFilter(request, response);
