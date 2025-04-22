@@ -8,9 +8,6 @@ spring:
         name: processador-video
     profiles:
         active: dev
-    jpa:
-        hibernate:
-            ddl-auto: none
     servlet:
         multipart:
             enabled: true
