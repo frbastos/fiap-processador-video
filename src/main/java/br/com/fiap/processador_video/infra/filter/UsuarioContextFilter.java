@@ -2,6 +2,7 @@ package br.com.fiap.processador_video.infra.filter;
 
 import java.io.IOException;
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import br.com.fiap.processador_video.domain.valueobjects.UsuarioContext;
@@ -11,6 +12,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+@Component
 public class UsuarioContextFilter extends OncePerRequestFilter {
 
     private static final String USER_HEADER = "X-User-Sub";
