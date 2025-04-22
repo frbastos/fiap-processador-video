@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -25,8 +26,13 @@ public class S3Config {
     @Bean
     public AmazonS3 amazonS3() {
         AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+
+        ClientConfiguration clientConfiguration = new ClientConfiguration();
+        clientConfiguration.setSignerOverride("AWSS3V4SignerType");
+
         return AmazonS3ClientBuilder.standard()
                 .withRegion(region)
+                .withClientConfiguration(clientConfiguration)
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
                 .build();
     }
