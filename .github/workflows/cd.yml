@@ -56,4 +56,4 @@ jobs:
       - name: Update Deployment
         run: |
           kubectl set image deployment/processador-deployment processador-container=ar989827/processador-video:${{ github.sha }}
-          kubectl rollout status deployment/ processador-deployment
+          kubectl rollout status deployment/processador-deployment
