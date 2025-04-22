@@ -18,6 +18,17 @@ spring:
         port: ${RABBITMQ_PORT}
         username: ${RABBIT_USERNAME}
         password: ${RABBIT_PASSWORD}
+    mail:
+        host: sandbox.smtp.mailtrap.io
+        port: 587
+        username: ${EMAIL_USERNAME}
+        password: ${EMAIL_PASSWORD}
+        properties:
+            mail:
+                smtp:
+                auth: true
+                starttls:
+                    enable: true
 
 # Caminho temporário dos frames
 storage:

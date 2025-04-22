@@ -63,7 +63,7 @@ class VideoControllerTest {
     @Test
     void deveAceitarUploadDeVideos() throws Exception {
         String usuarioId = UUID.randomUUID().toString();
-        UsuarioContext.setUsuarioId(usuarioId);
+        UsuarioContext.setUsuario(usuarioId, null);
         
         MockMultipartFile file = new MockMultipartFile("files", "video.mp4", "video/mp4", "conteudo".getBytes());
 
@@ -76,7 +76,7 @@ class VideoControllerTest {
     @Test
     void deveListarVideosProcessados() throws Exception {
         String usuarioId = UUID.randomUUID().toString();
-        UsuarioContext.setUsuarioId(usuarioId);
+        UsuarioContext.setUsuario(usuarioId, null);
 
         Video video1 = new Video(UUID.randomUUID(), "video1.mp4", VideoStatus.CONCLUIDO, "path1", usuarioId);
         Video video2 = new Video(UUID.randomUUID(), "video2.mp4", VideoStatus.ERRO, "path2", usuarioId);
@@ -93,7 +93,7 @@ class VideoControllerTest {
         UUID videoId = UUID.randomUUID();
 
         String usuarioId = UUID.randomUUID().toString();
-        UsuarioContext.setUsuarioId(usuarioId);
+        UsuarioContext.setUsuario(usuarioId, null);
 
         InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream("zip content".getBytes()));
 
@@ -109,7 +109,7 @@ class VideoControllerTest {
         UUID videoId = UUID.randomUUID();
 
         String usuarioId = UUID.randomUUID().toString();
-        UsuarioContext.setUsuarioId(usuarioId);
+        UsuarioContext.setUsuario(usuarioId, null);
 
         when(downloadZipUseCase.baixarZip(videoId, usuarioId)).thenThrow(new VideoNotFoundException(videoId));
 

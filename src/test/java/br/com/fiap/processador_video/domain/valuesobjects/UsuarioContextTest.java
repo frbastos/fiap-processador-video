@@ -43,7 +43,7 @@ class UsuarioContextFilterTest {
         String sub = "abc-123";
         String token = gerarTokenComSub(sub);
         when(request.getProtocol()).thenReturn("HTTP/1.1");
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
+        when(request.getHeader("Authorization-IdToken")).thenReturn(token);
 
         doAnswer(invocation -> {
             assertEquals(sub, UsuarioContext.getUsuarioId());
@@ -76,23 +76,7 @@ class UsuarioContextFilterTest {
         FilterChain chain = mock(FilterChain.class);
 
         when(request.getProtocol()).thenReturn("HTTP/1.1");
-        when(request.getHeader("Authorization")).thenReturn(null);
-
-        UsuarioNaoEncontradoNoHeaderException ex = assertThrows(
-                UsuarioNaoEncontradoNoHeaderException.class,
-                () -> filter.doFilterInternal(request, response, chain));
-
-        assertEquals("Header Authorization não encontrado ou inválido.", ex.getMessage());
-    }
-
-    @Test
-    void deveLancarExcecaoQuandoAuthorizationNaoComecaComBearer() {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        FilterChain chain = mock(FilterChain.class);
-
-        when(request.getProtocol()).thenReturn("HTTP/1.1");
-        when(request.getHeader("Authorization")).thenReturn("Token abc");
+        when(request.getHeader("Authorization-IdToken")).thenReturn(null);
 
         UsuarioNaoEncontradoNoHeaderException ex = assertThrows(
                 UsuarioNaoEncontradoNoHeaderException.class,
@@ -110,7 +94,7 @@ class UsuarioContextFilterTest {
         String token = gerarTokenSemSub();
 
         when(request.getProtocol()).thenReturn("HTTP/1.1");
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
+        when(request.getHeader("Authorization-IdToken")).thenReturn(token);
 
         UsuarioNaoEncontradoNoHeaderException ex = assertThrows(
                 UsuarioNaoEncontradoNoHeaderException.class,

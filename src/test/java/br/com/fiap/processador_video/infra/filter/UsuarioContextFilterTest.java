@@ -48,7 +48,7 @@ class UsuarioContextFilterTest {
         FilterChain chain = mock(FilterChain.class);
 
         when(request.getProtocol()).thenReturn("HTTP/1.1");
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
+        when(request.getHeader("Authorization-IdToken")).thenReturn(token);
 
         doAnswer(invocation -> {
             assertEquals(usuarioId, UsuarioContext.getUsuarioId());
@@ -80,7 +80,7 @@ class UsuarioContextFilterTest {
         FilterChain chain = mock(FilterChain.class);
 
         when(request.getProtocol()).thenReturn("HTTP/1.1");
-        when(request.getHeader("Authorization")).thenReturn(null);
+        when(request.getHeader("Authorization-IdToken")).thenReturn(null);
 
         UsuarioNaoEncontradoNoHeaderException ex = assertThrows(
                 UsuarioNaoEncontradoNoHeaderException.class,
@@ -99,7 +99,7 @@ class UsuarioContextFilterTest {
         FilterChain chain = mock(FilterChain.class);
 
         when(request.getProtocol()).thenReturn("HTTP/2.0");
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + tokenSemSub);
+        when(request.getHeader("Authorization-IdToken")).thenReturn(tokenSemSub);
 
         UsuarioNaoEncontradoNoHeaderException ex = assertThrows(
                 UsuarioNaoEncontradoNoHeaderException.class,

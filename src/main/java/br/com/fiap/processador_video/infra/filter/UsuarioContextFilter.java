@@ -18,8 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class UsuarioContextFilter extends OncePerRequestFilter {
 
-    private static final String AUTH_HEADER = "Authorization";
-    private static final String BEARER_PREFIX = "Bearer ";
+    private static final String AUTH_HEADER = "Authorization-IdToken";
 
     @Override
     public void doFilterInternal(
@@ -40,20 +39,21 @@ public class UsuarioContextFilter extends OncePerRequestFilter {
                 return;
             }
 
-            String authorization = request.getHeader(AUTH_HEADER);
-            if (authorization == null || !authorization.startsWith(BEARER_PREFIX)) {
+            String token = request.getHeader(AUTH_HEADER);
+            if (token == null) {
                 throw new UsuarioNaoEncontradoNoHeaderException("Header Authorization não encontrado ou inválido.");
             }
 
-            String token = authorization.substring(BEARER_PREFIX.length());
+            // Extraindo Usuario ID
             DecodedJWT jwt = JWT.decode(token);
             String usuarioId = jwt.getSubject();
+            String emailUsuario = jwt.getClaim("email").asString();
 
             if (usuarioId == null || usuarioId.isBlank()) {
                 throw new UsuarioNaoEncontradoNoHeaderException("Claim 'sub' não encontrada no token.");
             }
 
-            UsuarioContext.setUsuarioId(usuarioId);
+            UsuarioContext.setUsuario(usuarioId, emailUsuario);
             filterChain.doFilter(request, response);
         } finally {
             UsuarioContext.clear();
